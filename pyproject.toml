@@ -9,13 +9,14 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "3.11.5"
 torch = "^2.0.1"
-numpy = "^1.26.0"
 pandas = "^2.1.1"
 matplotlib = "^3.8.0"
 nvitop = "^1.3.0"
 dask = "^2023.9.2"
 soundfile = "^0.12.1"
 scipy = "^1.11.3"
+wget = "^3.2"
+numpy = "1.25.0"
 
 
 [build-system]
