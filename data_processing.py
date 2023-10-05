@@ -48,4 +48,5 @@ def save_stft(folder_path: str, json_path: str) -> None:
 
 
 if __name__ == "__main__":
-    save_stft("./.dataset/X_train_min", "data.json")
+    # save_stft("./.dataset/X_train_min", "data.json")
+    pass
