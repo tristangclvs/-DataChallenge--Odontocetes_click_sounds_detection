@@ -36,7 +36,7 @@ def save_stft(folder_path: str, json_path: str) -> None:
             # data["stft_imag"].append(imag_stft)
             
             data["abs_stft"].append(abs_stft.tolist())
-            
+
             # store the label
             data["labels"].append(df[df["id"]==f]["pos_label"].values[0])
     
@@ -49,11 +49,3 @@ def save_stft(folder_path: str, json_path: str) -> None:
 
 if __name__ == "__main__":
     save_stft("./.dataset/X_train_min", "data.json")
-    # data = {
-    #     "stft": [],
-    #     "labels": []
-    # }
-    # df = pd.read_csv("./.dataset/Y_train_ofTdMHi.csv")
-    # data["labels"].append(df[df["id"]=="00001-JAM.wav"]["pos_label"].values[0])
-    # data["labels"].append(df[df["id"]=="00002-JAM.wav"]["pos_label"].values[0])
-    # print(data)
