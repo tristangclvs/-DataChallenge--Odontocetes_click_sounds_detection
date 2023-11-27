@@ -20,10 +20,10 @@ from tensorflow.keras.applications.efficientnet import preprocess_input
 from sklearn.model_selection import train_test_split
 
 
-output_path = download_path = Path.cwd() / ".result"
+# output_path = download_path = Path.cwd() / ".result"
 
-if not os.path.exists(output_path):
-    os.makedirs(output_path)
+# if not os.path.exists(output_path):
+#     os.makedirs(output_path)
 
 # Set the path to the downloaded data
 download_path = Path.cwd() / ".dataset"
@@ -55,48 +55,48 @@ print(ipd.Markdown(table))
 df.head()
 
 
-def get_images(samples, sr, output_path):
-    n_fft = 2048
-    hop_length = 512
-    n_mels = 90
-    S = librosa.feature.melspectrogram(y=samples,
-                                       sr=sr,
-                                       n_fft=n_fft,
-                                       hop_length=hop_length,
-                                       n_mels=n_mels,
-                                       fmax=100000)
-    S_db = librosa.power_to_db(S, ref=np.max)
-    fig, ax = plt.subplots(figsize=(2, 2))
-    librosa.display.specshow(S_db,
-                             x_axis='time',
-                             y_axis='linear',
-                             sr=sr,
-                             hop_length=hop_length,
-                             )
-    plt.axis('off')
-    plt.tight_layout()
-    plt.savefig(output_path, dpi=150, format='png',
-                bbox_inches='tight', pad_inches=0)
-    plt.close()
+# def get_images(samples, sr, output_path):
+#     n_fft = 2048
+#     hop_length = 512
+#     n_mels = 90
+#     S = librosa.feature.melspectrogram(y=samples,
+#                                        sr=sr,
+#                                        n_fft=n_fft,
+#                                        hop_length=hop_length,
+#                                        n_mels=n_mels,
+#                                        fmax=100000)
+#     S_db = librosa.power_to_db(S, ref=np.max)
+#     fig, ax = plt.subplots(figsize=(2, 2))
+#     librosa.display.specshow(S_db,
+#                              x_axis='time',
+#                              y_axis='linear',
+#                              sr=sr,
+#                              hop_length=hop_length,
+#                              )
+#     plt.axis('off')
+#     plt.tight_layout()
+#     plt.savefig(output_path, dpi=150, format='png',
+#                 bbox_inches='tight', pad_inches=0)
+#     plt.close()
 
 
-input_directory = Path.cwd() / ".dataset/X_train"
-output_directory = "./spectogram_images"
+# input_directory = Path.cwd() / ".dataset/X_train"
+# output_directory = "./spectogram_images"
 
-if not os.path.exists(output_directory):
-    os.makedirs(output_directory)
+# if not os.path.exists(output_directory):
+#     os.makedirs(output_directory)
 
 
-for filename in tqdm(os.listdir(input_directory)):
-    if filename.endswith(".wav"):  # Check the file extension
-        file_path = os.path.join(input_directory, filename)
-        output_path = os.path.join(
-            output_directory, f"{os.path.splitext(filename)[0]}.png")
+# for filename in tqdm(os.listdir(input_directory)):
+#     if filename.endswith(".wav"):  # Check the file extension
+#         file_path = os.path.join(input_directory, filename)
+#         output_path = os.path.join(
+#             output_directory, f"{os.path.splitext(filename)[0]}.png")
 
-        audio_data, sr = librosa.load(file_path, sr=None)
-        get_images(audio_data, sr, output_path)
+#         audio_data, sr = librosa.load(file_path, sr=None)
+#         get_images(audio_data, sr, output_path)
 
-print("Done!")
+# print("Done!")
 
 class_counts = df['label'].value_counts()
 
@@ -208,17 +208,19 @@ X_train, X_val, y_train, y_val = train_test_split(
 print("Shape of training dataset: ", len(X_train))
 print("Shape of validation dataset: ", len(X_val))
 
-BATCH_SIZE = 32
+BATCH_SIZE = 8
 # Training epochs definition
 steps_per_epoch = train_size // BATCH_SIZE
 
 # Fitting the model
 history = model.fit(
-    X_train,
-    y_train,
-    validation_data=(X_val, y_val),
+    np.array(X_train),
+    np.array(y_train),
+    validation_data=(np.array(X_val), np.array(y_val)),
     epochs=5,
-    verbose=2,
+    verbose=1,
     # steps_per_epoch=steps_per_epoch,
     callbacks=[early_stopping]
 )
+
+model.save("trained_model.h5")
