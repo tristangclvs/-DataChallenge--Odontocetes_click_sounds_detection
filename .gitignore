@@ -168,3 +168,4 @@ cython_debug/
 
 # User-specific stuff
 spectogram_images/
+spectogram_test_images/
