@@ -21,6 +21,10 @@ ipython = "^8.18.1"
 seaborn = "^0.13.0"
 efficientnet = "^1.1.1"
 tqdm = "^4.66.1"
+comm = "^0.2.0"
+ipykernel = "^6.27.1"
+xgboost = "^2.0.2"
+reservoirpy = "^0.3.10"
 
 
 [build-system]

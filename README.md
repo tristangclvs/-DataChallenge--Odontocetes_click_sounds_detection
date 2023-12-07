@@ -1,7 +1,8 @@
 <br/>
 <div align="center" >
 
-![Confusion Matrix](images/ENSC.png)
+![Logo ENSC](images/ENSC.png)
+
 
 # <u> ENSC Parcours IA </u>
 ## Data Challenge - Détection de clics d'odontocètes
