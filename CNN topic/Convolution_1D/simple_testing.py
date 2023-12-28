@@ -33,4 +33,4 @@ print(len(file_names))
 print("----------------------------------")
 
 df = pd.DataFrame({'id': file_names, 'pos_label': predictions[:, 0]})
-df.to_csv(f"{conv1D_directory}/submission.csv", index=False)
+df.to_csv(f"{conv1D_directory}/submission_l2.csv", index=False)

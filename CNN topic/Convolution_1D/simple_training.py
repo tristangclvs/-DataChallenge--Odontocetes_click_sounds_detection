@@ -66,7 +66,7 @@ def build_model():
     model.summary()
     return model
 
-def plot_accuracy():
+def plot_accuracy(history):
     acc = history.history['accuracy']
     val_acc = history.history['val_accuracy']
     epochs = range(1, len(acc) + 1)
@@ -97,7 +97,7 @@ def composer(audio_signal, sample_rate):
 # main
 if __name__ == "__main__":
 
-    # ====== Set parameters ======
+    #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
     models_directory = Path.cwd() / "CNN topic" / "Convolution_1D" / "models"
@@ -162,3 +162,5 @@ if __name__ == "__main__":
     os.mkdir(Path(models_directory)) if not os.path.exists(Path(models_directory)) else None
     model.save(Path(models_directory) / model_name)
 
+    print("\n------------------ Plotting accuracy ------------------", end="\n\n")
+    plot_accuracy(history)
