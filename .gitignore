@@ -5,6 +5,8 @@
 .DS_*/
 .DS_Store
 data.json
+WIP.ipynb
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
