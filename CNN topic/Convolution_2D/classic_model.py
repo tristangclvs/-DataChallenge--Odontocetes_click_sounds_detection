@@ -13,7 +13,6 @@ import zipfile
 import tensorflow as tf
 import tensorflow.keras.backend as K
 from tensorflow.keras.callbacks import EarlyStopping
-import efficientnet.tfkeras as efn
 from tqdm import tqdm
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.efficientnet import preprocess_input
@@ -103,11 +102,11 @@ class_counts = df['label'].value_counts()
 # Assuming there are only two classes
 class_names = ['0', '1']
 
-plt.bar(class_names, [class_counts[0], class_counts[1]])
-plt.xlabel('Labels')
-plt.ylabel('Nombres')
-plt.title('Distribution dataset')
-plt.show()
+# plt.bar(class_names, [class_counts[0], class_counts[1]])
+# plt.xlabel('Labels')
+# plt.ylabel('Nombres')
+# plt.title('Distribution dataset')
+# plt.show()
 
 NUM_IMAGES = len(os.listdir(Path.cwd() / 'spectogram_images'))
 print('Dataset: {} total images'.format(NUM_IMAGES))
@@ -167,26 +166,34 @@ lr_callback = tf.keras.callbacks.LearningRateScheduler(
 early_stopping = EarlyStopping(
     monitor='val_loss', min_delta=0.001, patience=2, restore_best_weights=True)
 
-pretrained_model = efn.EfficientNetB2(
-    weights='imagenet',
-    include_top=False,
-    input_shape=[*[255, 255], 3]
-)
-
-pretrained_model.trainable = False
 
 model = tf.keras.Sequential([
-    pretrained_model,
-    tf.keras.layers.GlobalAveragePooling2D(),
-    tf.keras.layers.Dense(40, activation='relu'),
-    tf.keras.layers.Dense(1, activation='sigmoid')
+    tf.keras.layers.Conv2D(32, (3, 3), activation='relu',
+                           input_shape=(255, 255, 3)),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Dropout(0.4),
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+    tf.keras.layers.MaxPooling2D(2, 2),
+    tf.keras.layers.Dropout(0.5),
+    tf.keras.layers.Flatten(),
+    tf.keras.layers.Dense(1024, activation='relu'),
+    tf.keras.layers.Dense(1, activation='softmax')
 ])
+model.summary()
+model.build()
 
 model.compile(
     optimizer="adam",
-    loss=binary_focal_loss(),
-    metrics=['binary_accuracy'],
+    loss="binary_crossentropy",
+    metrics=['accuracy'],
 )
+
 model.summary()
 
 
@@ -202,6 +209,7 @@ for i in tqdm(os.listdir(images_folder)):
 
     images_preprocessed.append(img_array)
 
+print("Spliting dataset into training and validation sets...")
 X_train, X_val, y_train, y_val = train_test_split(
     images_preprocessed, df['label'], test_size=0.2, random_state=42)
 
@@ -223,4 +231,4 @@ history = model.fit(
     callbacks=[early_stopping]
 )
 
-model.save("trained_model.h5")
+model.save("trained_model.keras")

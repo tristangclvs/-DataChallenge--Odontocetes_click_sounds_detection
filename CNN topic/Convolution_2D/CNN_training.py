@@ -12,7 +12,9 @@ import soundfile as sf
 import zipfile
 import tensorflow as tf
 import tensorflow.keras.backend as K
+from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.callbacks import EarlyStopping
+import efficientnet.tfkeras as efn
 from tqdm import tqdm
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.efficientnet import preprocess_input
@@ -25,7 +27,7 @@ from sklearn.model_selection import train_test_split
 #     os.makedirs(output_path)
 
 # Set the path to the downloaded data
-download_path = Path.cwd() / ".dataset"
+download_path = Path.cwd().parent / ".dataset"
 
 # Read labels file
 labels_file = download_path / "Y_train_ofTdMHi.csv"
@@ -38,7 +40,7 @@ df["relative_path"] = str(download_path) + "/X_train/" + df["id"]
 df.drop(columns=["id"], inplace=True)
 
 df.rename(columns={"pos_label": "label"}, inplace=True)
-
+df["label"] = df["label"].astype(int)
 # invert relative_path and label columns positions
 df = df[["relative_path", "label"]]
 print(ipd.Markdown(
@@ -98,17 +100,17 @@ df.head()
 # print("Done!")
 
 class_counts = df['label'].value_counts()
-
+print(df['label'])
 # Assuming there are only two classes
 class_names = ['0', '1']
 
-# plt.bar(class_names, [class_counts[0], class_counts[1]])
-# plt.xlabel('Labels')
-# plt.ylabel('Nombres')
-# plt.title('Distribution dataset')
-# plt.show()
+plt.bar(class_names, [class_counts[0], class_counts[1]])
+plt.xlabel('Labels')
+plt.ylabel('Nombres')
+plt.title('Distribution dataset')
+plt.show()
 
-NUM_IMAGES = len(os.listdir(Path.cwd() / 'spectogram_images'))
+NUM_IMAGES = len(os.listdir(Path.cwd().parent / 'spectogram_images'))
 print('Dataset: {} total images'.format(NUM_IMAGES))
 
 train_size = int(0.8 * NUM_IMAGES)
@@ -166,70 +168,115 @@ lr_callback = tf.keras.callbacks.LearningRateScheduler(
 early_stopping = EarlyStopping(
     monitor='val_loss', min_delta=0.001, patience=2, restore_best_weights=True)
 
+# pretrained_model = efn.EfficientNetB2(
+#     weights='imagenet',
+#     include_top=False,
+#     input_shape=[*[255, 255], 3]
+# )
+
+# pretrained_model.trainable = False
+
+# model = tf.keras.Sequential([
+#     pretrained_model,
+#     tf.keras.layers.GlobalAveragePooling2D(),
+#     tf.keras.layers.Dense(40, activation='relu'),
+#     tf.keras.layers.Dense(1, activation='sigmoid')
+# ])
+
+# model = tf.keras.Sequential([
+#     tf.keras.layers.Conv2D(32, (3, 3), activation='relu',
+#                            input_shape=(255, 255, 3)),
+#     tf.keras.layers.MaxPooling2D(2, 2),
+#     tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+#     tf.keras.layers.MaxPooling2D(2, 2),
+#     tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+#     tf.keras.layers.MaxPooling2D(2, 2),
+#     tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
+#     tf.keras.layers.MaxPooling2D(2, 2),
+#     tf.keras.layers.Flatten(),
+#     tf.keras.layers.Dense(1024, activation='relu'),
+#     tf.keras.layers.Dense(2, activation='softmax')
+# ])
 
 
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(255, 255, 3)),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Dropout(0.4),
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Dropout(0.5),
-    tf.keras.layers.Conv2D(128, (3, 3), activation='relu'),
-    tf.keras.layers.MaxPooling2D(2,2),
-    tf.keras.layers.Dropout(0.5),    
-    tf.keras.layers.Flatten(),
-    tf.keras.layers.Dense(1024, activation='relu'),
-    tf.keras.layers.Dense(1, activation='softmax')
-])
+model = tf.keras.Sequential()
+model.add(tf.keras.layers.Conv2D(
+    32, (3, 3), activation='relu', input_shape=(255, 255, 3)))
+model.add(tf.keras.layers.MaxPooling2D(2, 2))
+model.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(tf.keras.layers.MaxPooling2D(2, 2))
+model.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(tf.keras.layers.MaxPooling2D(2, 2))
+model.add(tf.keras.layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(tf.keras.layers.MaxPooling2D(2, 2))
+model.add(tf.keras.layers.Flatten())
+model.add(tf.keras.layers.Dense(1024, activation='relu'))
+model.add(tf.keras.layers.Dense(2, activation='softmax'))
+model.compile(optimizer='adam', loss='categorical_crossentropy',
+              metrics=['accuracy'])
 model.summary()
-model.build()
 
 model.compile(
     optimizer="adam",
-    loss="binary_crossentropy",
+    loss="categorical_crossentropy",
     metrics=['accuracy'],
 )
 
 model.summary()
 
-
-images_folder = Path.cwd() / 'spectogram_images'
+images_folder = Path.cwd().parent / 'spectogram_images'
 
 images_preprocessed = []
 for i in tqdm(os.listdir(images_folder)):
     img = image.load_img(os.path.join(images_folder, i),
-                         target_size=(255, 255))
+                         target_size=(255, 255,3))
     img_array = image.img_to_array(img)
 
     img_array = preprocess_input(img_array)
 
     images_preprocessed.append(img_array)
 
-print("Spliting dataset into training and validation sets...")
 X_train, X_val, y_train, y_val = train_test_split(
-    images_preprocessed, df['label'], test_size=0.2, random_state=42)
+    images_preprocessed, df['label'], stratify= df['label'], test_size=0.2, random_state=0)
+
+X_train_norm = np.array(X_train) / 255
+X_val_norm = np.array(X_val) / 255
+
+y_train_encoded = to_categorical(y_train, num_classes=2)
+y_val_encoded = to_categorical(y_val, num_classes=2)
+
+
+print(type(X_train_norm))
+print(type(X_val_norm))
+print(type(y_train_encoded))
+print(type(y_val_encoded))
 
 print("Shape of training dataset: ", len(X_train))
 print("Shape of validation dataset: ", len(X_val))
 
-BATCH_SIZE = 8
+# BATCH_SIZE = 8
 # Training epochs definition
-steps_per_epoch = train_size // BATCH_SIZE
+# steps_per_epoch = train_size // BATCH_SIZE
 
 # Fitting the model
 history = model.fit(
-    np.array(X_train),
-    np.array(y_train),
-    validation_data=(np.array(X_val), np.array(y_val)),
-    epochs=5,
-    verbose=1,
-    # steps_per_epoch=steps_per_epoch,
-    callbacks=[early_stopping]
+    X_train_norm,
+    y_train_encoded,
+    validation_data=(X_val_norm, y_val_encoded),
+    batch_size=8,
+    epochs=3
 )
 
-model.save("trained_model.keras")
+acc = history.history['accuracy']
+val_acc = history.history['val_accuracy']
+epochs = range(1, len(acc) + 1)
+
+plt.plot(epochs, acc, '-', label='Training Accuracy')
+plt.plot(epochs, val_acc, ':', label='Validation Accuracy')
+plt.title('Training and Validation Accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.legend(loc='lower right')
+plt.plot()
+
+model.save("labels_as_integers_trained_model.h5")

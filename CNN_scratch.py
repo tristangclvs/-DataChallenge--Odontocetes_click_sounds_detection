@@ -121,7 +121,7 @@ if __name__ == "__main__":
     print(X_train.shape)
 
     # # Build model
-    model = build_model(input_shape=(X_train.shape[0], X_train.shape[1], 1))
+    model = build_model(input_shape=(13900, 40, 1))
     model.summary()
 
     # # Compile model

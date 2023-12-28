@@ -80,7 +80,6 @@ df.rename(columns={"pos_label": "label"}, inplace=True)
 # invert relative_path and label columns positions
 df = df[["relative_path", "label"]]
 
-
 # # load data
 images_folder = Path.cwd() / 'spectogram_test_images'
 
@@ -99,5 +98,5 @@ y_test = df['label'].values
 print("Shape of testing dataset: ", len(X_test))
 
 # load model and evaluate
-model = tf.keras.models.load_model('trained_model.h5')
+model = tf.keras.models.load_model('labels_as_integers_trained_model.h5')
 model.evaluate(X_test, y_test)
