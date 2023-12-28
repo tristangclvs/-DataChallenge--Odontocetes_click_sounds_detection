@@ -6,6 +6,7 @@ import librosa.display
 import librosa.feature as feat
 import matplotlib.pyplot as plt
 import numpy as np
+from audiomentations import Compose, PitchShift, TimeStretch, ClippingDistortion
 import os
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 from pathlib import Path
@@ -79,6 +80,20 @@ def plot_accuracy():
     plt.plot()
 
 
+def composer(audio_signal, sample_rate):
+    pitch_shift_steps = (-2,2)
+    time_stretch_factor = (0.8,1.2)
+    clipping_distortion_factor = (0.0, 0.5)
+
+    augment = Compose([
+        PitchShift(p=0.3, steps=pitch_shift_steps),
+        TimeStretch(p=0.2, factor=time_stretch_factor),
+        ClippingDistortion(p=0.3, factor=clipping_distortion_factor)
+    ])
+
+    augmented_audio = augment(samples=audio_signal, sample_rate=sample_rate)
+    return augmented_audio
+
 # main
 if __name__ == "__main__":
 
@@ -128,6 +143,13 @@ if __name__ == "__main__":
 
     print("\nSplitting data into train and validation sets")
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    X_train_augmented = []
+
+    print("\nAugmenting training data")
+    for audio in tqdm(X_train, desc="Augmenting training data", unit="file"):
+        X_train_augmented.append(composer(audio, sample_rate))
+    X_train_all = np.concatenate((X_train, X_train_augmented))
 
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
 
