@@ -1,11 +1,9 @@
 import pandas as pd
-from pathlib import Path
 import os
 import librosa
 import librosa.display
 import librosa.feature as feat
 import matplotlib.pyplot as plt
-import numpy as np
 from audiomentations import Compose, PitchShift, TimeStretch, ClippingDistortion
 import os
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
@@ -16,8 +14,6 @@ from tqdm import tqdm
 from scipy import signal
 import seaborn as sns
 import numpy as np
-import IPython.display as ipd
-import matplotlib.pyplot as plt
 import tensorflow as tf
 from tensorflow.keras import layers, models
 from time import time
@@ -81,15 +77,13 @@ def plot_accuracy(history):
 
 
 def composer(audio_signal, sample_rate):
-    pitch_shift_steps = (-2,2)
-    time_stretch_factor = (0.8,1.2)
-    clipping_distortion_factor = (0.0, 0.5)
 
     augment = Compose([
-        PitchShift(p=0.3, steps=pitch_shift_steps),
-        TimeStretch(p=0.2, factor=time_stretch_factor),
-        ClippingDistortion(p=0.3, factor=clipping_distortion_factor)
+    PitchShift(p=0.5, min_semitones=-8, max_semitones = 8),
+    TimeStretch(p=0.4, min_rate=0.8, max_rate=1.2, leave_length_unchanged=True),
+    ClippingDistortion(p=0.3, min_percentile_threshold=0, max_percentile_threshold=20)
     ])
+
 
     augmented_audio = augment(samples=audio_signal, sample_rate=sample_rate)
     return augmented_audio
@@ -100,8 +94,8 @@ if __name__ == "__main__":
     #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
-    models_directory = Path.cwd() / "CNN topic" / "Convolution_1D" / "models"
-    model_name = "1d_cnn_l2.keras"
+    models_directory = Path.cwd() / "CNN topic" / "models"
+    model_name = "1d_cnn_l2_augmented.keras"
 
     # Set the path to the downloaded data
     download_path = Path.cwd() / ".dataset"
