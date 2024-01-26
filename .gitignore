@@ -176,13 +176,3 @@ spectogram_test_images/
 .env_macos/
 *.h5
 *.keras
-
-CNN_topic/Convolution_1D/simple_testing.py
-CNN_topic/Convolution_1D/simple_training.py
-CNN_topic/Convolution_1D/*.csv
-CNN_topic/Convolution_1D/test.ipynb
-CNN_topic/Convolution_1D/notebook_conv1d.ipynb
-
-CNN_topic/Convolution_2D/*
-
-reservoirpy.ipynb
