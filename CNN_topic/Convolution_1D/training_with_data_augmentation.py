@@ -44,7 +44,7 @@ def load_and_preprocess_data(df, target_length):
     data_list = []
     labels_list = []
 
-    for index, row in tqdm(df.iterrows(), desc="Loading and preprocessing data", unit="file"):
+    for index, row in tqdm(df.iterrows(), desc="Loading and preprocessing data", unit="file", total=len(df)):
         audio, sr = librosa.load(row["relative_path"], sr=None)
         if len(audio) < target_length:
             audio = np.pad(audio, (0, target_length - len(audio)))
@@ -89,7 +89,6 @@ def load_and_preprocess_data(df, target_length):
     print("Doneeeeeeeeeeee")
     return data, labels
 
-
 def build_model(target_length):
     print("\nCreating model")
     model = models.Sequential()
@@ -132,7 +131,7 @@ def plot_accuracy(history):
 
 # main
 if __name__ == "__main__":
-
+    print(Path.cwd())
     #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN_topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
@@ -140,7 +139,7 @@ if __name__ == "__main__":
     model_name = "1d_cnn_l2_data_augmentation_pitch_shift_time_stretch_30_epochs.h5"
 
     # Set the path to the downloaded data
-    download_path = Path.cwd() / "../../.dataset"
+    download_path = Path.cwd() / ".dataset"
 
     # Audio parameters
     sample_rate = 256000
@@ -175,13 +174,12 @@ if __name__ == "__main__":
     print("Loading and preprocessing data")
     target_length = int(sample_rate * audio_duration_seconds)
 
-    X,y = load_and_preprocess_data(df, target_length)
-
+    X, y = load_and_preprocess_data(df, target_length)
 
     print(X)
     print("=====================================================")
     print(y)
-
+    os.system('cls')
     print("\nSplitting data into train and validation sets")
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
 
@@ -194,7 +192,7 @@ if __name__ == "__main__":
 
     print("\n------------------ Saving model ------------------", end="\n\n")
     os.mkdir(Path(models_directory)) if not os.path.exists(Path(models_directory)) else None
-    model.save(Path(models_directory) / model_name)
+    model.save(model_name)
 
     print("\n------------------ Plotting accuracy ------------------", end="\n\n")
     plot_accuracy(history)

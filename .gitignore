@@ -6,7 +6,7 @@
 .DS_Store
 data.json
 WIP.ipynb
-
+*.json
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -172,7 +172,19 @@ cython_debug/
 spectogram_images/
 spectogram_test_images/
 
-
+models/*
 .env_macos/
 *.h5
 *.keras
+notebook_conv1d copy.ipynb
+*.csv
+
+CNN_topic/Convolution_1D/simple_testing.py
+CNN_topic/Convolution_1D/simple_training.py
+CNN_topic/Convolution_1D/*.csv
+CNN_topic/Convolution_1D/test.ipynb
+CNN_topic/Convolution_1D/notebook_conv1d.ipynb
+
+CNN_topic/Convolution_2D/*
+
+reservoirpy.ipynb

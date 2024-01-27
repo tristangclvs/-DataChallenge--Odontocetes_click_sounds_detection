@@ -25,6 +25,8 @@ comm = "^0.2.0"
 ipykernel = "^6.27.1"
 xgboost = "^2.0.2"
 reservoirpy = "^0.3.10"
+hyperopt = "^0.2.7"
+audiomentations = "^0.34.1"
 
 
 [build-system]
