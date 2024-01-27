@@ -175,7 +175,7 @@ if __name__ == "__main__":
     print("Loading and preprocessing data")
     target_length = int(sample_rate * audio_duration_seconds)
 
-    X,y = load_and_preprocess_data(df[:50], target_length)
+    X,y = load_and_preprocess_data(df, target_length)
 
 
     print(X)
@@ -190,7 +190,7 @@ if __name__ == "__main__":
     model = build_model(target_length) # Build model
 
     print("\n------------------ Training model ------------------", end="\n\n")
-    history = model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_val, y_val), callbacks=[early_stopping])
+    history = model.fit(X_train, y_train, epochs=30, batch_size=32, validation_data=(X_val, y_val), callbacks=[early_stopping])
 
     print("\n------------------ Saving model ------------------", end="\n\n")
     os.mkdir(Path(models_directory)) if not os.path.exists(Path(models_directory)) else None
