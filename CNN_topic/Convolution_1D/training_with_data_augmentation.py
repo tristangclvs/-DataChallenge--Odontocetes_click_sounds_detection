@@ -4,7 +4,7 @@ import librosa
 import librosa.display
 import librosa.feature as feat
 import matplotlib.pyplot as plt
-from audiomentations import Compose, PitchShift, TimeStretch, ClippingDistortion
+from audiomentations import Compose, PitchShift, TimeStretch, ClippingDistortion, Shift
 import os
 from sklearn.metrics import f1_score, roc_auc_score, accuracy_score
 from pathlib import Path
@@ -33,6 +33,13 @@ def pitch_shifter(audio_signal, sample_rate):
     augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)
     return augmented_audio
 
+def time_shift(audio_signal, sample_rate):
+    shift_values = [0.5]
+    shift_transforms = [Shift(min_shift=-shift, max_shift=shift, shift_unit="fraction", rollover=True) for shift in shift_values]
+    augmentations = Compose(shift_transforms)
+    augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)
+    return augmented_audio
+    
 def time_stretcher(audio_signal, sample_rate): 
     time_stretch_values = [0.8, 1.2]
     time_stretch_transforms = [TimeStretch(time_stretch) for time_stretch in time_stretch_values]
@@ -62,26 +69,31 @@ def load_and_preprocess_data(df, target_length):
         labels_list.append(current_audio_label)
 
 
-        apply_pitch_shift = np.random.rand() < 0.6
-        apply_time_stretching = np.random.rand() < 0.6
+        # apply_pitch_shift = np.random.rand() < 0.6
+        # apply_time_stretching = np.random.rand() < 0.6
 
         augmented_audio = None
 
-        if apply_pitch_shift and apply_time_stretching:
-            # Augmentation du fichier audio avec les deux process
-            augmented_audio = pitch_shifter(audio, sr)
-            augmented_audio = time_stretcher(augmented_audio, sr)
-        elif apply_pitch_shift:
-            # Augmentation du fichier audio avec le pitch shifting
-            augmented_audio = pitch_shifter(audio, sr)
-        elif apply_time_stretching:
-            # Augmentation du fichier audio avec le time stretching
-            augmented_audio = time_stretcher(audio, sr)
+        # if apply_pitch_shift and apply_time_stretching:
+        #     # Augmentation du fichier audio avec les deux process
+        #     augmented_audio = pitch_shifter(audio, sr)
+        #     augmented_audio = time_stretcher(augmented_audio, sr)
+        # elif apply_pitch_shift:
+        #     # Augmentation du fichier audio avec le pitch shifting
+        #     augmented_audio = pitch_shifter(audio, sr)
+        # elif apply_time_stretching:
+        #     # Augmentation du fichier audio avec le time stretching
+        #     augmented_audio = time_stretcher(audio, sr)
+        augmented_audio_pitch = pitch_shifter(audio, sr).astype(np.float32)
+        augmented_audio_timeshift = time_shift(audio, sr).astype(np.float32)
 
-        if augmented_audio is not None:
-            augmented_audio = augmented_audio.astype(np.float32)
-            data_list.append(augmented_audio)
-            labels_list.append(current_audio_label)
+        # if augmented_audio is not None:
+            # augmented_audio = augmented_audio.astype(np.float32)
+        # data_list.append(augmented_audio)
+        data_list.append(augmented_audio_pitch)
+        data_list.append(augmented_audio_timeshift)
+        labels_list.append(current_audio_label)
+        labels_list.append(current_audio_label)
 
     data = np.array(data_list)
     labels = np.array(labels_list)
@@ -129,14 +141,18 @@ def plot_accuracy(history):
     plt.legend(loc='lower right')
     plt.plot()
 
+
+model_name = "data_augmentation_pitch_shift_time_shift_30_epochs.keras"
+
 # main
 if __name__ == "__main__":
-    print(Path.cwd())
+    
     #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN_topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
     models_directory = Path.cwd() /  "../models"
-    model_name = "1d_cnn_l2_data_augmentation_pitch_shift_time_stretch_30_epochs.h5"
+    EPOCHS = 10
+    BATCH_SIZE = 32
 
     # Set the path to the downloaded data
     download_path = Path.cwd() / ".dataset"
@@ -181,14 +197,14 @@ if __name__ == "__main__":
     print(y)
     os.system('cls')
     print("\nSplitting data into train and validation sets")
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=64)
 
     early_stopping = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
 
     model = build_model(target_length) # Build model
 
     print("\n------------------ Training model ------------------", end="\n\n")
-    history = model.fit(X_train, y_train, epochs=30, batch_size=32, validation_data=(X_val, y_val), callbacks=[early_stopping])
+    history = model.fit(X_train, y_train, epochs=EPOCHS, batch_size=BATCH_SIZE, validation_data=(X_val, y_val), callbacks=[early_stopping])
 
     print("\n------------------ Saving model ------------------", end="\n\n")
     os.mkdir(Path(models_directory)) if not os.path.exists(Path(models_directory)) else None
