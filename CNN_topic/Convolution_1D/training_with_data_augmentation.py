@@ -15,26 +15,28 @@ from scipy import signal
 import seaborn as sns
 import numpy as np
 import tensorflow as tf
+from codecarbon import EmissionsTracker
 from tensorflow.keras import layers, models, regularizers
 from time import time
 
-# def composer(audio_signal, sample_rate): 
-#     pitch_shift_values = [-2, -1, 1, 2]
-#     pitch_shift_transforms = [PitchShift(pitch_shift) for pitch_shift in pitch_shift_values]
-#     augmentations = Compose(pitch_shift_transforms)
-#     augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)
-#     return augmented_audio
-
+# ======================================================================================================================== #
+# def composer(audio_signal, sample_rate):                                                                                 #
+#     pitch_shift_values = [-2, -1, 1, 2]                                                                                  #                                          
+#     pitch_shift_transforms = [PitchShift(pitch_shift) for pitch_shift in pitch_shift_values]                             #                     
+#     augmentations = Compose(pitch_shift_transforms)                                                                      #                           
+#     augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)                                       #    
+#     return augmented_audio                                                                                               #        
+# ======================================================================================================================== #
 
 def pitch_shifter(audio_signal, sample_rate): 
-    pitch_shift_values = [-2, 2]
+    pitch_shift_values = [-4, 4]
     pitch_shift_transforms = [PitchShift(pitch_shift) for pitch_shift in pitch_shift_values]
     augmentations = Compose(pitch_shift_transforms)
     augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)
     return augmented_audio
 
 def time_shift(audio_signal, sample_rate):
-    shift_values = [0.5]
+    shift_values = [0.6]
     shift_transforms = [Shift(min_shift=-shift, max_shift=shift, shift_unit="fraction", rollover=True) for shift in shift_values]
     augmentations = Compose(shift_transforms)
     augmented_audio = augmentations(samples=audio_signal, sample_rate=sample_rate)
@@ -70,18 +72,18 @@ def load_and_preprocess_data(df, target_length):
 
 
         # apply_pitch_shift = np.random.rand() < 0.6
-        # apply_time_stretching = np.random.rand() < 0.6
+        # apply_time_shift = np.random.rand() < 0.6
 
         augmented_audio = None
 
-        # if apply_pitch_shift and apply_time_stretching:
+        # if apply_pitch_shift and apply_time_shift:
         #     # Augmentation du fichier audio avec les deux process
         #     augmented_audio = pitch_shifter(audio, sr)
         #     augmented_audio = time_stretcher(augmented_audio, sr)
         # elif apply_pitch_shift:
         #     # Augmentation du fichier audio avec le pitch shifting
         #     augmented_audio = pitch_shifter(audio, sr)
-        # elif apply_time_stretching:
+        # elif apply_time_shift:
         #     # Augmentation du fichier audio avec le time stretching
         #     augmented_audio = time_stretcher(audio, sr)
         augmented_audio_pitch = pitch_shifter(audio, sr).astype(np.float32)
@@ -104,20 +106,21 @@ def load_and_preprocess_data(df, target_length):
 def build_model(target_length):
     print("\nCreating model")
     model = models.Sequential()
-    model.add(layers.Conv1D(32, kernel_size=9, activation='relu', input_shape=(target_length, 1)))
+    # First convolutional layer
+    model.add(layers.Conv1D(32, kernel_size=7, activation='relu', input_shape=(target_length, 1)))
     model.add(layers.MaxPooling1D(pool_size=2))
     # Second convolutional layer
-    model.add(layers.Conv1D(32, kernel_size=9, activation='relu'))
+    model.add(layers.Conv1D(64, kernel_size=5, activation='relu'))
     model.add(layers.MaxPooling1D(pool_size=2))
     # Third convolutional layer
-    model.add(layers.Conv1D(32, kernel_size=5, activation='relu'))
+    model.add(layers.Conv1D(128, kernel_size=3, activation='relu'))
     model.add(layers.MaxPooling1D(pool_size=2))
     # Flatten the output for the fully connected layers
     model.add(layers.Flatten())
     # First fully connected layer
-    model.add(layers.Dense(128, activation='relu', kernel_regularizer="l2")) #! L2 regularization to remove after
+    model.add(layers.Dense(128, activation='relu', kernel_regularizer="l2")) 
     # Second fully connected layer
-    model.add(layers.Dense(64, activation='relu', kernel_regularizer="l2")) #! L2 regularization to remove after
+    model.add(layers.Dense(64, activation='relu', kernel_regularizer="l2")) 
     # Dropout regularization to avoid overfitting
     model.add(layers.Dropout(0.5))
     # Binary classification output layer
@@ -139,19 +142,25 @@ def plot_accuracy(history):
     plt.xlabel('Epoch')
     plt.ylabel('Accuracy')
     plt.legend(loc='lower right')
+    plt.savefig("accuracy_plot.jpg")
     plt.plot()
+    # close the plot
+    plt.close()
+    
+
 
 
 model_name = "data_augmentation_pitch_shift_time_shift_30_epochs.keras"
 
 # main
 if __name__ == "__main__":
-    
+    tracker = EmissionsTracker(project_name="CNN_topic")
+    tracker.start()
     #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN_topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
     models_directory = Path.cwd() /  "../models"
-    EPOCHS = 10
+    EPOCHS = 30
     BATCH_SIZE = 32
 
     # Set the path to the downloaded data
@@ -209,6 +218,24 @@ if __name__ == "__main__":
     print("\n------------------ Saving model ------------------", end="\n\n")
     os.mkdir(Path(models_directory)) if not os.path.exists(Path(models_directory)) else None
     model.save(model_name)
-
+    tracker.stop()
+    
     print("\n------------------ Plotting accuracy ------------------", end="\n\n")
+    # create a jpg file with the accuracy plot
     plot_accuracy(history)
+
+    print("\n------------------ plot the confusion matrix ------------------", end="\n\n")
+    # plot the confusion matrix
+    y_pred = model.predict(X_val)
+    y_pred = np.round(y_pred).astype(int)
+    y_true = y_val.astype(int)
+    cm = tf.math.confusion_matrix(y_true, y_pred)
+    sns.heatmap(cm, annot=True, fmt='g')
+    plt.xlabel('Predicted')
+    plt.ylabel('True')
+    plt.savefig("confusion_matrix.jpg")
+    plt.plot()
+
+    print("\n------------------ Done ------------------", end="\n\n")
+
+    

@@ -16,7 +16,10 @@ target_length = int(sample_rate * audio_duration_seconds)
 # model_name = "data_augmentation_pitch_shift_time_shift_30_epochs"
 # model = build_model(target_length)
 model = models.load_model(f"{model_name}")
-
+print("=====================================================")
+print(model_name)
+print(model.summary())
+print("=====================================================", end="\n\n")
 
 ##########################
 
@@ -29,7 +32,7 @@ target_length = int(0.2 * 256000)
 conv1D_directory = Path.cwd() / "CNN topic" / "Convolution_1D"
 test_directory = Path.cwd() / ".dataset" / "X_test"
 models_directory = Path.cwd() / "CNN topic" /  "models"
-model_name = f"G:/Fac.CAF.AMELI.etc/ENSC/Cours ENSC/Semestre 9/Spé_IA/projet/spe_ia_clics_odontocetes/{model_name}"
+
 
 X_test = load_test_data(test_directory, target_length)
 
