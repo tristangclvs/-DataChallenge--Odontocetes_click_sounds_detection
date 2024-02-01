@@ -23,7 +23,7 @@ The model will be evaluated on the [ChallengeData](https://challengedata.ens.fr/
 
 ## Data Description
 
-The dataset consists of 23,168 audio files in WAV format, each of duration 200ms. The clicks are labeled with a binary variable: 1 if the file contains a click, 0 otherwise.
+The dataset is composed of 23,168 audio files in WAV format, each of duration 200ms. The clicks are labeled with a binary variable: 1 if the file contains a click, 0 otherwise.
 
 ## Challenge
 
@@ -35,7 +35,7 @@ The submissions are evaluated on the ROC AUC (area under the curve) metric.
 
 ## Submission
 
-The submissions must be a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file. The prediction must be a binary variable: 1 if the file contains at least one click, 0 otherwise.
+The submissions must be a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file.
 
 ## Our approach
 
@@ -57,12 +57,12 @@ Next, you may install all the necessary dependencies using
 poetry install
 ```
 
-<!-- ## <u> Repository Structure </u>
+ ## <u> Repository Structure </u>
 
 The repository is structured as follows:
 
-- **`.dataset`**: contains the training and test sets used for the challenge.
-- **`images`**: contains the images used in the README file.
-- **`notebooks`**: contains the notebooks used for the challenge, as well as the results.
-- **`saved_models`**: contains the trained models.
-- **`src`**: contains the scripts used for the challenge. -->
+<!-- - **`.dataset`**: contains the training and test sets used for the challenge. -->
+- **[`images`](/images/)**: contains the images used in the README file.
+- **[`notebooks`](/notebooks/)**: contains the notebooks used for the challenge, as well as the results.
+<!-- - **`saved_models`**: contains the trained models. -->
+<!-- - **`src`**: contains the scripts used for the challenge.  -->
