@@ -72,7 +72,40 @@ We also used a Convolutional Neural Network to classify the audio files. We used
     </tr>
 </table>
 </div>
+
+### Reservoir computing
+
+### Convolution Networks
+#### Conv1D
+#### Conv2D
+
+
+
 ## Installation
+
+First of all, you may clone this repository on your computer.
+
+```bash
+git clone https://github.com/tristangclvs/spe_ia_clics_odontocetes.git
+```
+
+Then, download the `.dataset` archive [here](https://drive.google.com/file/d/1gNyw2PcUCYmpCm8lNTyPJ_ydeLdbDQiw/view?usp=sharing) and extract it in the main root of the cloned folder.
+
+You may want to create a virtual environment for python.
+
+```bash
+python -m venv NameOfYourEnv
+```
+Then select your environment:
+> Windows:
+>```bash
+>NameOfYourEnv/Scripts/activate
+>```
+>Mac:
+>```bash
+>source NameOfYourEnv/bin/activate
+>```
+
 
 To run the code in this repository, you will need to install `poetry`:
 ```bash
