@@ -33,27 +33,57 @@ The objective of the challenge is to create a model that predicts the presence o
 
 The submissions are evaluated on the ROC AUC (area under the curve) metric. 
 
-## Submission
-
-The submissions must be a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file.
+The submissions must be a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file. The prediction en percentage should be indicated and must not be rounded to binary labels.
 
 ## Our approach
 
-We first used classical machine learning model, as Random Forest or XGBClassifier.
+We first used classical machine learning model, such as `Linear Regression` or `Random Forest`.
 
 We also used a Convolutional Neural Network to classify the audio files. We used the [Librosa](https://librosa.org/doc/latest/index.html) library to extract the audio features.
 
 ## Results
-
-
+### Classical approaches
+- Logistic Regression
+- Decision Tree
+- Bagged Tree
+- Random Forest
+- XGBoost 
+<div align="center">
+<table>
+    <tr>
+        <th>Method</th>
+        <th>Result</th>
+    </tr>
+    <tr>
+        <td>Logistic Regression</td>
+        <td>0.5981</td>
+    </tr>
+    <tr>
+        <td>Decision  Tree</td>
+        <td>06124</td>
+    </tr>
+    <tr>
+        <td>Bagged Tree</td>
+        <td>0.6351</td>
+    </tr>
+    <tr>
+        <td>Random Forest</td>
+        <td>0.6460</td>
+    </tr>
+    <tr>
+        <td>XGBoost</td>
+        <td>0.6301</td>
+    </tr>
+</table>
+</div>
 ## Installation
 
 To run the code in this repository, you will need to install `poetry`:
-```
+```bash
 pip install poetry
 ```
 Next, you may install all the necessary dependencies using 
-```
+```bash
 poetry install
 ```
 
