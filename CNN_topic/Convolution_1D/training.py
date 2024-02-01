@@ -16,7 +16,7 @@ from utils import load_and_preprocess_data_augmented, build_model
 
 model_name = "data_augmentation_pitch_shift_time_shift_30_epochs.keras"
 
-# main
+
 if __name__ == "__main__":
     tracker = EmissionsTracker(project_name="CNN_topic")
     tracker.start()
