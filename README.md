@@ -116,11 +116,12 @@ Next, you may install all the necessary dependencies using
 poetry install
 ```
 
- ## <u> Repository Structure </u>
+##  Repository Structure
 
 The repository is structured as follows:
 
 <!-- - **`.dataset`**: contains the training and test sets used for the challenge. -->
+- **[`CNN_topic`](/CNN_topic/)**: contains the files used to train the convolutional neural networks (1D & 2D).
 - **[`images`](/images/)**: contains the images used in the README file.
 - **[`notebooks`](/notebooks/)**: contains the notebooks used for the challenge, as well as the results.
 <!-- - **`saved_models`**: contains the trained models. -->
