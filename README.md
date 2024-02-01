@@ -43,11 +43,7 @@ We also used a Convolutional Neural Network to classify the audio files. We used
 
 ## Results
 ### Classical approaches
-- Logistic Regression
-- Decision Tree
-- Bagged Tree
-- Random Forest
-- XGBoost 
+
 <div align="center">
 <table>
     <tr>
