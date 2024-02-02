@@ -9,33 +9,33 @@
 
 </div>
 
-## Authors
+## ✍️ Authors
 
 - [Tristan Gonçalves](https://github.com/tristangclvs)
 - [Thomas Chimbault](https://github.com/thomaschlt)
 
-## Context 
+## 🐬 Context 
 
 As part of the [Artificial Intelligence specialization](https://3aia.notion.site/3aia/Parcours-3A-IA-2023-9917027c682b457dae71fea68c067ad1) at the [ENSC](https://ensc.bordeaux-inp.fr/fr), we participated in a data challenge provided by the University of Toulon in the [ChallengeData](https://challengedata.ens.fr/) website. 
 
 This challenge specifically aims to detect the presence of odontoceti clicks in underwater audio recordings in the Caribbean sea.
 The model will be evaluated on the [ChallengeData](https://challengedata.ens.fr/) website.
 
-## Data Description
+## 📊 Data Description
 
 The dataset is composed of 23,168 audio files in WAV format, each of duration 200ms. The clicks are labeled with a binary variable: 1 if the file contains a click, 0 otherwise.
 
-## Challenge
+## 🎯 Challenge
 
 The objective of the challenge is to create a model that predicts the presence of odontoceti clicks in the test set with the highest accuracy.
 
-## Evaluation
+## 📏 Evaluation
 
 The submissions are evaluated on the ROC AUC (area under the curve) metric.
 
 The results must be submitted as a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file. The prediction in percentage should be indicated and must not be rounded to binary labels.
 
-## Our approach
+## 🔎 Our approach
 
 We first used classical machine learning model, such as `Linear Regression` or `Random Forest`.
 
@@ -94,7 +94,7 @@ However, results were really not convincing, in regard of the energetic consumpt
 
 For information, our best result there was <b>0.86</b>.
 
-## Installation
+## 💻 Installation
 
 First of all, you may clone this repository on your computer.
 
