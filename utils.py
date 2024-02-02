@@ -6,6 +6,11 @@ from scipy import signal
 from audiomentations import Compose, PitchShift, TimeStretch, Shift
 from tensorflow.keras import layers, models
 
+"""
+    Various utility functions used in the project.
+"""
+
+
 def retrieve_hyper_params_from_json(json_file):
     """Retrieves the hyper parameters from a json file in case of hyper parameter optimization for reservoir computing."""
     with open(json_file) as f:

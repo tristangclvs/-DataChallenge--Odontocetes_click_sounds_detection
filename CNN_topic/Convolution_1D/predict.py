@@ -14,7 +14,10 @@ sample_rate = 256000
 audio_duration_seconds = 0.2
 target_length = int(sample_rate * audio_duration_seconds)
 model = models.load_model(f"{model_name}")
-
+print("=====================================================")
+print(model_name)
+print(model.summary())
+print("=====================================================", end="\n\n")
 
 ##########################
 

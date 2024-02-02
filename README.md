@@ -31,13 +31,15 @@ The objective of the challenge is to create a model that predicts the presence o
 
 ## Evaluation
 
-The submissions are evaluated on the ROC AUC (area under the curve) metric. 
+The submissions are evaluated on the ROC AUC (area under the curve) metric.
 
-The submissions must be a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file. The prediction en percentage should be indicated and must not be rounded to binary labels.
+The results must be submitted as a CSV file with 950 lines. Each line corresponds to a file of the test set and contains the prediction for this file. The prediction in percentage should be indicated and must not be rounded to binary labels.
 
 ## Our approach
 
 We first used classical machine learning model, such as `Linear Regression` or `Random Forest`.
+
+Then, we used the [`ReservoirPy`](https://github.com/reservoirpy/reservoirpy) library, created and maintained by the Inria of Bordeaux. This uses the reservoir computing theory, part of the RNN's domain.
 
 We also used a Convolutional Neural Network to classify the audio files. We used the [Librosa](https://librosa.org/doc/latest/index.html) library to extract the audio features.
 
@@ -52,38 +54,45 @@ We also used a Convolutional Neural Network to classify the audio files. We used
     </tr>
     <tr>
         <td>Logistic Regression</td>
-        <td>0.5981</td>
+        <td> <b>0.5981</b> </td>
     </tr>
     <tr>
         <td>Decision  Tree</td>
-        <td>06124</td>
+        <td> <b>0.6124</b> </td>
     </tr>
     <tr>
         <td>Bagged Tree</td>
-        <td>0.6351</td>
+        <td> <b>0.6351</b> </td>
     </tr>
     <tr>
         <td>Random Forest</td>
-        <td>0.6460</td>
+        <td> <b>0.6460</b> </td>
     </tr>
     <tr>
         <td>XGBoost</td>
-        <td>0.6301</td>
+        <td> <b>0.6301</b> </td>
     </tr>
 </table>
 </div>
 
 ### Reservoir computing
 
+We didn't get the result we expected by using reservoir computing. In fact, the issue we got resided in the format of the results.
+As a matter of fact, ReservoirPy's results were not probabilities and could be above 1 or below 0. Therefore, we had to put a threshold and round these extreme values to either 1 or 0. This distorted our results and we obtained a score of only <b>0.48</b>. However, this method has been implemented very late during the project, so we maybe have wrongfully used this library.
+
 ### Convolution Networks
 #### Conv1D
+
 
 Final Score: **0.9566**
 
 
 #### Conv2D
 
+We tried to use 2D convolutions because it is well-known that audio files can be represented with spectrograms. \
+However, results were really not convincing, in regard of the energetic consumption of our model training. Indeed, our project being related to the study of underwater life, we thought that having a very consuming and heavy model was totally inappropriate.
 
+For information, our best result there was <b>0.86</b>.
 
 ## Installation
 
@@ -95,29 +104,33 @@ git clone https://github.com/tristangclvs/spe_ia_clics_odontocetes.git
 
 Then, download the `.dataset` archive [here](https://drive.google.com/file/d/1gNyw2PcUCYmpCm8lNTyPJ_ydeLdbDQiw/view?usp=sharing) and extract it in the main root of the cloned folder.
 
-You may want to create a virtual environment for python.
+<details>
+  <summary>Creating a <u><b>virtual environment</b></u></summary>
 
-```bash
-python -m venv NameOfYourEnv
-```
-Then select your environment:
-> Windows:
+
+>You may want to create a virtual environment for python. \
+>```bash
+>python -m venv NameOfYourEnv
+>```
+>Then select your environment:
+>
+> ### ⊞ Windows:
 >```bash
 >NameOfYourEnv/Scripts/activate
 >```
->Mac:
+> ### 🍏 Mac:
 >```bash
 >source NameOfYourEnv/bin/activate
->```
+>``` 
+> <br>
 
+</details>
 
-To run the code in this repository, you will need to install `poetry`:
+<br>
+
+To run the code in this repository, you will need to install the necessary dependencies:
 ```bash
-pip install poetry
-```
-Next, you may install all the necessary dependencies using 
-```bash
-poetry install
+pip install -r requirements.txt
 ```
 
 ##  Repository Structure
@@ -126,7 +139,6 @@ The repository is structured as follows:
 
 <!-- - **`.dataset`**: contains the training and test sets used for the challenge. -->
 - **[`CNN_topic`](/CNN_topic/)**: contains the files used to train the convolutional neural networks (1D & 2D).
-- **[`images`](/images/)**: contains the images used in the README file.
+- **[`images`](/images/)**: contains the images used in the README file and a notebook for plotting some charts.
 - **[`notebooks`](/notebooks/)**: contains the notebooks used for the challenge.
-<!-- - **`saved_models`**: contains the trained models. -->
-<!-- - **`src`**: contains the scripts used for the challenge.  -->
+
