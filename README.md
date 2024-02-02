@@ -77,6 +77,10 @@ We also used a Convolutional Neural Network to classify the audio files. We used
 
 ### Convolution Networks
 #### Conv1D
+
+Final Score: **0.9566**
+
+
 #### Conv2D
 
 
@@ -123,6 +127,6 @@ The repository is structured as follows:
 <!-- - **`.dataset`**: contains the training and test sets used for the challenge. -->
 - **[`CNN_topic`](/CNN_topic/)**: contains the files used to train the convolutional neural networks (1D & 2D).
 - **[`images`](/images/)**: contains the images used in the README file.
-- **[`notebooks`](/notebooks/)**: contains the notebooks used for the challenge, as well as the results.
+- **[`notebooks`](/notebooks/)**: contains the notebooks used for the challenge.
 <!-- - **`saved_models`**: contains the trained models. -->
 <!-- - **`src`**: contains the scripts used for the challenge.  -->
