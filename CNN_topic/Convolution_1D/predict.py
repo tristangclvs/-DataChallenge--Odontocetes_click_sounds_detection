@@ -3,9 +3,16 @@ import pandas as pd
 import numpy as np
 import librosa
 from tqdm import tqdm
+import sys
 from pathlib import Path
-from CNN_topic.Convolution_1D.training import build_model, model_name
 
+
+# Add the root project folder to the path
+sys.path.append('../')
+sys.path.append('../../')
+sys.path.append(str(Path.cwd()))
+from CNN_topic.Convolution_1D.training import build_model, model_name
+from utils.utils import load_and_preprocess_data, build_model
 
 ##########################
 # Audio parameters
@@ -29,7 +36,7 @@ target_length = int(0.2 * 256000)
 conv1D_directory = Path.cwd() / "CNN topic" / "Convolution_1D"
 test_directory = Path.cwd() / ".dataset" / "X_test"
 models_directory = Path.cwd() / "CNN topic" /  "models"
-model_name = f"G:/Fac.CAF.AMELI.etc/ENSC/Cours ENSC/Semestre 9/Spé_IA/projet/spe_ia_clics_odontocetes/{model_name}"
+model_name = f"{models_directory}/{model_name}"
 
 X_test = load_test_data(test_directory, target_length)
 
