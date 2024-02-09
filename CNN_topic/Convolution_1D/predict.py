@@ -4,7 +4,6 @@ import numpy as np
 import librosa
 from tqdm import tqdm
 from pathlib import Path
-from simple_training import load_and_preprocess_data
 from CNN_topic.Convolution_1D.training import build_model, model_name
 
 

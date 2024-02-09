@@ -10,16 +10,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Add the root project folder to the path
+sys.path.append('../')
 sys.path.append('../../')
-from utils import load_and_preprocess_data_augmented, build_model
+sys.path.append(str(Path.cwd()))
+from utils.utils import load_and_preprocess_data_augmented, build_model
 
 
 model_name = "data_augmentation_pitch_shift_time_shift_30_epochs.keras"
 
 
 if __name__ == "__main__":
-    tracker = EmissionsTracker(project_name="CNN_topic")
+    tracker = EmissionsTracker(project_name="CNN_1D_training")
     tracker.start()
+
     #! ====== Set parameters ======
     conv1D_directory = Path.cwd() / "CNN_topic" / "Convolution_1D"
     test_directory = Path.cwd() / ".dataset" / "X_test"
@@ -28,7 +32,7 @@ if __name__ == "__main__":
     BATCH_SIZE = 32
 
     # Set the path to the downloaded data
-    download_path = Path.cwd() / "../../.dataset"
+    download_path = Path.cwd() / ".dataset"
 
     # Audio parameters
     sample_rate = 256000
