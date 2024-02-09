@@ -10,7 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-sys.path.append('../')
+sys.path.append('../../')
 from utils import load_and_preprocess_data_augmented, build_model
 
 
