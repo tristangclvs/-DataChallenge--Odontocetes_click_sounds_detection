@@ -28,7 +28,7 @@ if __name__ == "__main__":
     BATCH_SIZE = 32
 
     # Set the path to the downloaded data
-    download_path = Path.cwd() / ".dataset"
+    download_path = Path.cwd() / "../../.dataset"
 
     # Audio parameters
     sample_rate = 256000
